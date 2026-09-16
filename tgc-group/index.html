@@ -1,0 +1,324 @@
+TEST<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>TGC Group, Property List and Per-Hotel Pricing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b1740; --navy3:#1b2c6b;
+  --mint:#2fd67f; --mint2:#18a860;
+  --ink:#0b1740; --muted:#5d6a89; --line:#e4e9f5;
+  --bg:#f4f7fd; --card:#fff; --strike:#95a0c0;
+  --shadow:0 22px 54px -30px rgba(11,23,64,.45);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ink:#eaf0ff; --muted:#9fabcd; --line:#26315c; --bg:#060b20; --card:#0d1533; --strike:#7a86ad;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eaf0ff; --muted:#9fabcd; --line:#26315c; --bg:#060b20; --card:#0d1533; --strike:#7a86ad;
+}
+*{box-sizing:border-box}
+html{color-scheme:light dark}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:Inter,"Segoe UI",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+  font-size:14.5px; line-height:1.5; -webkit-font-smoothing:antialiased; padding-bottom:84px;
+}
+h1,h2{letter-spacing:-.8px; line-height:1.1; margin:0}
+a{color:inherit}
+.wrap{max-width:1040px; margin:0 auto; padding-inline:18px}
+.eyebrow{font-size:10.5px; letter-spacing:.19em; font-weight:800; text-transform:uppercase; color:var(--mint2)}
+
+.nav{background:var(--card); border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex; align-items:center; gap:12px; min-height:52px; flex-wrap:wrap; padding-block:8px}
+.brand{display:flex; align-items:center; gap:11px; font-weight:800; font-size:16.5px}
+.brand .r{color:var(--mint2); letter-spacing:-.6px}
+.brand .bar{width:1px; height:19px; background:var(--line)}
+.brand .c{font-size:13px; font-weight:700}
+.nav .sp{flex:1}
+.btn{display:inline-block; background:var(--mint); color:#053420; font-weight:800; text-decoration:none;
+  padding:9px 17px; border-radius:999px; font-size:12.5px; white-space:nowrap;
+  box-shadow:0 9px 20px -12px rgba(24,168,96,.75)}
+.btn:hover{background:var(--mint2); color:#fff}
+.btn.ghost{background:transparent; color:var(--ink); border:1.5px solid var(--line); box-shadow:none}
+.btn.ghost:hover{border-color:var(--ink)}
+
+.hero{position:relative; overflow:hidden; background:linear-gradient(165deg,var(--navy) 0%,var(--navy3) 65%,#24398a 100%); color:#fff}
+.hero::before{content:""; position:absolute; width:520px; height:520px; right:-160px; top:-230px; border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, rgba(47,214,127,.28), transparent 62%); pointer-events:none}
+.hero .wrap{position:relative; padding-block:32px 34px}
+.hero .eyebrow{color:var(--mint)}
+.hero h1{font-size:clamp(26px,4.6vw,40px); font-weight:900; margin:11px 0 0; max-width:20ch}
+.heroStats{display:flex; gap:10px; flex-wrap:wrap; margin-top:22px}
+.hstat{flex:1 1 150px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.15); border-radius:13px; padding:13px 15px}
+.hstat .k{display:block; font-size:9.5px; letter-spacing:.15em; text-transform:uppercase; color:#a7b4e0; font-weight:800}
+.hstat .v{display:block; font-size:23px; font-weight:900; letter-spacing:-1.1px; margin-top:5px; line-height:1.05}
+.hstat .v.mint{color:var(--mint)}
+.hstat .d{display:block; font-size:11px; color:#b6c1e6; margin-top:4px}
+
+section{padding-block:28px}
+.shead{margin-bottom:16px; max-width:66ch}
+.shead h2{font-size:clamp(20px,3vw,27px); font-weight:800; margin:7px 0 6px}
+.shead p{color:var(--muted); margin:0}
+.card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px}
+
+.controls{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:14px}
+.fbtn{font:inherit; font-size:12px; font-weight:700; cursor:pointer; background:var(--card); color:var(--muted);
+  border:1px solid var(--line); padding:7px 14px; border-radius:999px}
+.fbtn:hover{color:var(--ink)}
+.fbtn[aria-pressed="true"]{background:var(--navy); color:#fff; border-color:var(--navy)}
+input[type="search"]{font:inherit; font-size:12.5px; padding:8px 13px; border-radius:999px; border:1px solid var(--line);
+  background:var(--card); color:var(--ink); min-width:180px; flex:1 1 180px}
+
+.tscroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{width:100%; border-collapse:collapse; min-width:720px}
+th{text-align:left; font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:800;
+  padding:0 9px 10px; border-bottom:1px solid var(--line)}
+th.sortable{cursor:pointer; user-select:none; white-space:nowrap}
+th.sortable:hover{color:var(--ink)}
+th .arw{opacity:.35; font-size:9px; margin-left:3px}
+th[aria-sort] .arw{opacity:1; color:var(--mint2)}
+th.r,td.r{text-align:right} th.c,td.c{text-align:center}
+td{padding:12px 9px; border-bottom:1px solid var(--line); vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+.pname{font-weight:700; font-size:13.5px}
+.pent{font-size:10.5px; color:var(--muted); margin-top:2px}
+.brandchip{font-size:11px; font-weight:700; color:var(--muted); white-space:nowrap}
+.badge{font-size:9px; font-weight:800; letter-spacing:.08em; padding:3px 7px; border-radius:5px; white-space:nowrap}
+.badge.O{background:rgba(11,23,64,.09); color:var(--navy3); border:1px solid rgba(11,23,64,.2)}
+.badge.S{background:rgba(245,165,36,.15); color:#a86c12; border:1px solid rgba(245,165,36,.45)}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .badge.O{background:rgba(130,158,255,.16); color:#bccbff; border-color:rgba(130,158,255,.34)} }
+s{color:var(--strike); text-decoration-thickness:1.6px; font-weight:600}
+.mintv{color:var(--mint2); font-weight:900}
+.rowtot{font-weight:900; font-size:13.5px; white-space:nowrap}
+tr.hide{display:none}
+.note{font-size:11.5px; color:var(--muted); margin:14px 0 0; line-height:1.55}
+
+.totalrow{margin-top:18px; padding-top:18px; border-top:2px solid var(--line);
+  display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.totalrow .lbl{font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:800; color:var(--muted)}
+.totalrow .big{font-size:clamp(28px,5.6vw,40px); font-weight:900; letter-spacing:-1.8px; line-height:1; margin-top:5px}
+.totalrow .addon{font-size:12.5px; color:var(--muted); margin-top:7px}
+.totalrow .addon b{color:var(--ink)}
+
+.sticky{position:fixed; left:0; right:0; bottom:0; z-index:70; background:var(--navy); color:#fff;
+  border-top:1px solid rgba(255,255,255,.12); box-shadow:0 -12px 32px -14px rgba(0,0,0,.55)}
+.sticky .wrap{display:flex; align-items:center; gap:13px; flex-wrap:wrap; padding-block:10px}
+.st{display:flex; flex-direction:column; min-width:66px}
+.st .k{display:block; font-size:8.5px; letter-spacing:.15em; text-transform:uppercase; color:#a7b4e0; font-weight:800}
+.st .v{display:block; font-size:16px; font-weight:900; letter-spacing:-.5px}
+.st .v.mint{color:var(--mint)}
+.st.grow{margin-left:auto; align-items:flex-end}
+.st.grow .v{font-size:22px}
+.foot{font-size:11px; color:var(--muted); padding-block:4px 20px; text-align:center}
+@media(max-width:640px){ .totalrow{flex-direction:column; align-items:flex-start} }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand"><span class="r">Reeco&deg;</span><span class="bar"></span><span class="c">TGC Group</span></div>
+    <div class="sp"></div>
+    <a class="btn ghost" href="https://control.reeco.com/r/tgcgr-QWNd7BMaEDDjYiK9">&larr; Sales room</a>
+    <a class="btn" href="https://calendar.app.google/aZ3j7d7nFaq6hrEg7" target="_blank" rel="noopener">Let's talk</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Property list &middot; AP Automation &middot; September 2026</div>
+    <h1>Every property, priced the same.</h1>
+    <div class="heroStats">
+      <div class="hstat"><span class="k">Properties open now</span><span class="v">40</span><span class="d">priced in this proposal</span></div>
+      <div class="hstat" style="background:rgba(47,214,127,.14); border-color:rgba(47,214,127,.5)"><span class="k" style="color:#2fd67f">Rate per property</span><span class="v mint">$150</span><span class="d">per month, every property</span></div>
+      <div class="hstat"><span class="k">Setup per property</span><span class="v mint">$0</span><span class="d">$500 waived</span></div>
+      <div class="hstat"><span class="k">Annual</span><span class="v">$72,000</span><span class="d">$6,000 per month</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="shead">
+      <div class="eyebrow">Property-level pricing</div>
+      <h2>Your 40 open properties, hotel by hotel.</h2>
+      <p>Sort any column, filter by status, or search for a hotel. The five properties opening between December and February are listed and are not in the priced total.</p>
+    </div>
+
+    <div class="card">
+      <div class="controls">
+        <button class="fbtn" data-filter="O" aria-pressed="true">Open now 40</button>
+        <button class="fbtn" data-filter="S" aria-pressed="false">Opening soon 5</button>
+        <button class="fbtn" data-filter="all" aria-pressed="false">All 45</button>
+        <input type="search" id="q" placeholder="Search property, brand or city&hellip;" aria-label="Search properties">
+      </div>
+
+      <div class="tscroll">
+        <table>
+          <thead>
+            <tr>
+              <th class="sortable" data-k="0">Property Name<span class="arw">&#9650;&#9660;</span></th>
+              <th class="sortable" data-k="1">Brand<span class="arw">&#9650;&#9660;</span></th>
+              <th class="sortable" data-k="2">City<span class="arw">&#9650;&#9660;</span></th>
+              <th class="sortable" data-k="3">State<span class="arw">&#9650;&#9660;</span></th>
+              <th class="sortable" data-k="4">Service Type<span class="arw">&#9650;&#9660;</span></th>
+              <th class="c">Setup</th>
+              <th class="r sortable" data-k="6">Monthly Subscription<span class="arw">&#9650;&#9660;</span></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+
+      <div class="totalrow">
+        <div>
+          <div class="lbl">Total across 40 open properties</div>
+          <div class="big">$6,000 / month</div>
+          <div class="addon"><b>$72,000</b> per year &nbsp;&middot;&nbsp; <b>$0</b> one-time setup &nbsp;&middot;&nbsp; 12-month term</div>
+        </div>
+        <a class="btn" href="https://control.reeco.com/r/tgcgr-QWNd7BMaEDDjYiK9" style="padding:12px 24px; font-size:14px">Back to your sales room</a>
+      </div>
+
+      <p class="note">Property list as sent by TGC Group on September 14, 2026, and accurate as of that date. Properties opening during the term join at the same $150 per month with setup waived.</p>
+    </div>
+  </div>
+</section>
+
+<div class="sticky">
+  <div class="wrap">
+    <div class="st"><span class="k">Showing</span><span class="v" id="sShow">40</span></div>
+    <div class="st"><span class="k">Rate</span><span class="v mint">$150</span></div>
+    <div class="st"><span class="k">Setup</span><span class="v mint">$0</span></div>
+    <div class="st"><span class="k">Annual</span><span class="v">$72,000</span></div>
+    <div class="st grow"><span class="k">Monthly total</span><span class="v mint">$6,000</span></div>
+  </div>
+</div>
+
+<div class="wrap"><p class="foot">Prepared by Reeco for TGC Group &middot; Reeco &times; M3</p></div>
+
+<script>
+(function(){
+  var RATE=150;
+  // name, brand, city, state, serviceType, status(O/S), openingNote
+  var P=[
+    ["TownePlace Suites Macon","TownePlace Suites","Macon","GA","Select service","O",""],
+    ["TownePlace Suites Wichita","TownePlace Suites","Wichita","KS","Select service","O",""],
+    ["TownePlace Suites Fort Worth","TownePlace Suites","Fort Worth","TX","Select service","O",""],
+    ["Extended Stay America McDonough","Extended Stay America","McDonough","GA","Extended stay","O",""],
+    ["Extended Stay America Madison","Extended Stay America","Madison","AL","Extended stay","O",""],
+    ["Extended Stay America Asheville","Extended Stay America","Asheville","NC","Extended stay","O",""],
+    ["Extended Stay America Belgrade","Extended Stay America","Belgrade","MT","Extended stay","O",""],
+    ["WoodSpring Suites Charleston","WoodSpring Suites","Charleston","SC","Extended stay","O",""],
+    ["WoodSpring Suites Port St Lucie","WoodSpring Suites","Port St Lucie","FL","Extended stay","O",""],
+    ["WoodSpring Suites Bellflower","WoodSpring Suites","Bellflower","CA","Extended stay","O",""],
+    ["WoodSpring Suites Moreno Valley","WoodSpring Suites","Moreno Valley","CA","Extended stay","O",""],
+    ["WoodSpring Suites Commerce City","WoodSpring Suites","Commerce City","CO","Extended stay","O",""],
+    ["WoodSpring Suites Rivergate","WoodSpring Suites","Madison","TN","Extended stay","O",""],
+    ["WoodSpring Suites Airport","WoodSpring Suites","Nashville","TN","Extended stay","O",""],
+    ["WoodSpring Suites Zionsville","WoodSpring Suites","Whitestown","IN","Extended stay","O",""],
+    ["WoodSpring Suites Broken Arrow","WoodSpring Suites","Tulsa","OK","Extended stay","O",""],
+    ["WoodSpring Suites Tulsa","WoodSpring Suites","Tulsa","OK","Extended stay","O",""],
+    ["WoodSpring Suites Louisville Jeffersontown","WoodSpring Suites","Louisville","KY","Extended stay","O",""],
+    ["WoodSpring Suites Atlanta Airport","WoodSpring Suites","Atlanta","GA","Extended stay","O",""],
+    ["WoodSpring Suites Rogers","WoodSpring Suites","Rogers","AR","Extended stay","O",""],
+    ["WoodSpring Suites San Antonio","WoodSpring Suites","San Antonio","TX","Extended stay","O",""],
+    ["La Quinta Wichita","La Quinta","Wichita","KS","Select service","O",""],
+    ["La Quinta Kansas City","La Quinta","Kansas City","MO","Select service","O",""],
+    ["My Place Bozeman","My Place","Bozeman","MT","Extended stay","O",""],
+    ["My Place Altoona","My Place","Altoona","IA","Extended stay","O",""],
+    ["My Place Ankeny","My Place","Ankeny","IA","Extended stay","O",""],
+    ["My Place Bentonville","My Place","Bentonville","AR","Extended stay","O",""],
+    ["My Place Davenport","My Place","Davenport","IA","Extended stay","O",""],
+    ["My Place Garner","My Place","Garner","NC","Extended stay","O",""],
+    ["My Place Missoula","My Place","Missoula","MT","Extended stay","O",""],
+    ["My Place Mt Pleasant","My Place","Mt Pleasant","WI","Extended stay","O",""],
+    ["My Place Nampa","My Place","Nampa","ID","Extended stay","O",""],
+    ["My Place Overland Park","My Place","Overland Park","KS","Extended stay","O",""],
+    ["My Place Augusta","My Place","Augusta","GA","Extended stay","O",""],
+    ["My Place Pooler","My Place","Pooler","GA","Extended stay","O",""],
+    ["My Place Shakopee","My Place","Shakopee","MN","Extended stay","O",""],
+    ["StayAPT Lithia Springs","StayAPT","Lithia Springs","GA","Extended stay","O",""],
+    ["StayAPT Clarksville","StayAPT","Clarksville","IN","Extended stay","O",""],
+    ["StudioRES Louisville","StudioRES","Louisville","KY","Extended stay","O",""],
+    ["Home2 Suites Wichita","Home2 Suites","Wichita","KS","Extended stay","O",""],
+    ["StudioRES Boise","StudioRES","Meridian","ID","Extended stay","S","Opens Dec 17, 2026"],
+    ["Home2 Suites Kansas City","Home2 Suites","Kansas City","KS","Extended stay","S","Opens Dec 29, 2026"],
+    ["StudioRES Colorado Springs","StudioRES","Colorado Springs","CO","Extended stay","S","Opens Dec 29, 2026"],
+    ["Home2 Suites Nashville","Home2 Suites","Nashville","TN","Extended stay","S","Opens Jan 26, 2027"],
+    ["Extended Stay America Myrtle Beach","Extended Stay America","Myrtle Beach","SC","Extended stay","S","Opens Feb 10, 2027"]
+  ];
+
+  var tbody=document.getElementById("rows");
+
+  function render(list){
+    tbody.innerHTML="";
+    list.forEach(function(p){
+      var tr=document.createElement("tr");
+      tr.dataset.type=p[5];
+      tr.dataset.hay=(p[0]+" "+p[1]+" "+p[2]+" "+p[3]).toLowerCase();
+      tr.innerHTML=
+        '<td><div class="pname">'+p[0]+'</div>'+(p[6]?'<div class="pent">'+p[6]+'</div>':'')+'</td>'+
+        '<td><span class="brandchip">'+p[1]+'</span></td>'+
+        '<td style="font-size:12.5px;color:var(--muted)">'+p[2]+'</td>'+
+        '<td style="font-size:12.5px;color:var(--muted)">'+p[3]+'</td>'+
+        '<td><span class="badge '+p[5]+'">'+(p[5]==="O"?"OPEN":"OPENING")+'</span> <span class="brandchip">'+p[4]+'</span></td>'+
+        '<td class="c" style="font-size:12.5px;line-height:1.3"><s>$500</s><br><b class="mintv">$0</b></td>'+
+        '<td class="r"><span class="rowtot">$150 / mo</span></td>';
+      tbody.appendChild(tr);
+    });
+    applyFilter();
+  }
+
+  var filter="O", sortKey=null, sortDir=1;
+
+  function applyFilter(){
+    var q=(document.getElementById("q").value||"").trim().toLowerCase();
+    var n=0;
+    Array.prototype.forEach.call(tbody.rows,function(tr){
+      var okT=(filter==="all")||(tr.dataset.type===filter);
+      var okQ=!q||tr.dataset.hay.indexOf(q)>-1;
+      var show=okT&&okQ;
+      tr.classList.toggle("hide",!show);
+      if(show) n++;
+    });
+    document.getElementById("sShow").textContent=n;
+  }
+
+  function sortBy(k){
+    if(sortKey===k){ sortDir=-sortDir; } else { sortKey=k; sortDir=1; }
+    var list=P.slice().sort(function(a,b){
+      var x=a[k], y=b[k];
+      if(k===6){ return 0; }
+      return String(x).localeCompare(String(y))*sortDir;
+    });
+    document.querySelectorAll("th.sortable").forEach(function(th){ th.removeAttribute("aria-sort"); });
+    var th=document.querySelector('th.sortable[data-k="'+k+'"]');
+    if(th) th.setAttribute("aria-sort", sortDir===1?"ascending":"descending");
+    render(list);
+  }
+
+  document.querySelectorAll("th.sortable").forEach(function(th){
+    th.addEventListener("click",function(){ sortBy(+th.dataset.k); });
+  });
+  document.querySelectorAll(".fbtn[data-filter]").forEach(function(b){
+    b.addEventListener("click",function(){
+      filter=b.dataset.filter;
+      document.querySelectorAll(".fbtn[data-filter]").forEach(function(x){ x.setAttribute("aria-pressed",String(x===b)); });
+      applyFilter();
+    });
+  });
+  document.getElementById("q").addEventListener("input",applyFilter);
+
+  render(P);
+})();
+</script>
+</body>
+</html>
